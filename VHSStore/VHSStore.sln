@@ -3,6 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VHSStore.Application", "VHSStore.Application", "{87CC5B37-A9F4-4216-8732-C95184E6B1AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VHSStore.Domain", "VHSStore.Domain", "{65B809B1-F5C6-464C-8D4C-91378AD5CD32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VHSStore.Infra.IoC", "VHSStore.Infra.IoC", "{940856B8-6844-4A33-9403-F54E275D5ABB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VHSStore.Api", "VHSStore.Api", "{8314D2E4-3C5F-488A-8979-074E9D1C41C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VHSStore.Infra.Data", "VHSStore.Infra.Data", "{D91B14BE-1562-4EFD-92DF-6BB9A9564405}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
