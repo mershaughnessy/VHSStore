@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VHSStore.Api.Hubs;
 using VHSStore.Infra.IoC;
 
 namespace VHSStore.Api
@@ -32,6 +33,8 @@ namespace VHSStore.Api
             services.AddControllers();
             services.AddInfrastructure();
             services.AddSwaggerGen();
+            services.AddSignalR();
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,11 +56,19 @@ namespace VHSStore.Api
 
             app.UseRouting();
 
+            app.UseCors(option =>
+          option.WithOrigins("http://localhost:3000")
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .AllowCredentials()
+           );
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatRoomHub>("/chatroomhub");
             });
         }
     }
