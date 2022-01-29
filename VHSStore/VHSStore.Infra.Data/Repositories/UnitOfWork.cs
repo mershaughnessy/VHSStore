@@ -7,11 +7,15 @@ namespace VHSStore.Infra.Data.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IUserRepository userRepository)
+        public UnitOfWork(
+            IUserRepository userRepository,
+            IGenreRepository genreRepository)
         {
             Users = userRepository;
+            Genres = genreRepository;
         }
 
         public IUserRepository Users { get; }
+        public IGenreRepository Genres { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VHSStore.Domain.Models.UserModels;
 
 namespace VHSStore.Domain.Models
 {
@@ -12,5 +13,17 @@ namespace VHSStore.Domain.Models
         public string Salt { get; set; }
         public string Email { get; set; }
         public string RefreshToken { get; set; }
+
+        public User()
+        {
+        }
+
+        public User(AddUser addUser, string password, string salt)
+        {
+            this.UserName = addUser.UserName;
+            this.Password = password;
+            this.Salt = salt;
+            this.Email = addUser.Email; 
+        }
     }
 }

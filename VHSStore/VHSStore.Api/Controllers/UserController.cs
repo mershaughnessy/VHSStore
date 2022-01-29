@@ -31,15 +31,14 @@ namespace VHSStore.Api.Controllers
             {
                 var data = await _unitOfWork.Users.GetAllAsync();
 
-                return Ok(new GetAllUsersResponse()
+                return Ok(new BaseResponse<IEnumerable<User>>()
                 {
                     Body = data,
-                    HasError = false,
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new GetAllUsersResponse()
+                return BadRequest(new BaseResponse<string>()
                 { 
                     HasError = true,
                     Error = ex.Message
@@ -56,7 +55,7 @@ namespace VHSStore.Api.Controllers
 
                 if (data == null)
                 {
-                    return Ok(new LoginUserResponse()
+                    return Ok(new BaseResponse<string>()
                     { 
                         HasError = true,
                         Error = "User does not exist."
@@ -67,14 +66,14 @@ namespace VHSStore.Api.Controllers
 
                 if (passwordHasher.HashedString == data.Password)
                 {
-                    return Ok(new LoginUserResponse()
+                    return Ok(new BaseResponse<string>()
                     { 
                         Body = _jwtAuthenticationManager.Authenticate(),
                         HasError = false, 
                     });
                 }
 
-                return Ok(new LoginUserResponse()
+                return Ok(new BaseResponse<string>()
                 {
                     HasError = true,
                     Error = "Username or password are incorrect."
@@ -82,7 +81,7 @@ namespace VHSStore.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new LoginUserResponse()
+                return BadRequest(new BaseResponse<string>()
                 { 
                     HasError = true,
                     Error = ex.Message
@@ -99,7 +98,7 @@ namespace VHSStore.Api.Controllers
 
                 if (!(checkUserAlreadyExists == null))
                 {
-                    return Ok(new AddUserResponse()
+                    return Ok(new BaseResponse<string>()
                     { 
                         HasError = true,
                         Error = "User already exists."
@@ -108,24 +107,18 @@ namespace VHSStore.Api.Controllers
 
                 var passwordHasher = new StringHasher(addUser.Password);
 
-                var user = new User() 
-                {
-                    UserName = addUser.UserName,
-                    Password = passwordHasher.HashedString,
-                    Salt = Convert.ToBase64String(passwordHasher.Salt),
-                    Email = addUser.Email,
-                };
+                var user = new User(addUser, passwordHasher.HashedString, Convert.ToBase64String(passwordHasher.Salt));
 
-                await _unitOfWork.Users.AddAsync(user);
+                var data = await _unitOfWork.Users.AddAsync(user);
 
-                return Ok(new AddUserResponse()
+                return Ok(new BaseResponse<string>()
                 { 
-                    HasError = false,
+                    Body = $"Affected rows: {data}"
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new AddUserResponse()
+                return BadRequest(new BaseResponse<string>()
                 { 
                     HasError = true, 
                     Error = ex.Message
@@ -138,16 +131,16 @@ namespace VHSStore.Api.Controllers
         {
             try
             {
-                await _unitOfWork.Users.DeleteAsync(id);
+                var data = await _unitOfWork.Users.DeleteAsync(id);
 
-                return Ok(new DeleteUserResponse()
+                return Ok(new BaseResponse<string>()
                 { 
-                    HasError = false,
+                    Body = $"Affected Rows: {data}"
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new DeleteUserResponse()
+                return BadRequest(new BaseResponse<string>()
                 {
                     HasError = true,
                     Error = ex.Message

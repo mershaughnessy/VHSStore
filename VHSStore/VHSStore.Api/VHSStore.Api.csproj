@@ -15,5 +15,9 @@
     <ProjectReference Include="..\VHSStore.Infra.IoC\VHSStore.Infra.IoC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+
 
 </Project>

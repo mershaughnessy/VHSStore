@@ -7,5 +7,6 @@ namespace VHSStore.Application.Interfaces
     public interface IUnitOfWork
     {
         IUserRepository Users { get; }
+        IGenreRepository Genres { get; }
     }
 }
