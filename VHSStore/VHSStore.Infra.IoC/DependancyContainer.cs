@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Hangfire;
+using Hangfire.MemoryStorage;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -7,6 +9,7 @@ using System.Text;
 using VHSStore.Application.Interfaces;
 using VHSStore.Infra.Data.Authentication;
 using VHSStore.Infra.Data.Repositories;
+using VHSStore.Schedules.Jobs;
 
 namespace VHSStore.Infra.IoC
 {
@@ -31,10 +34,28 @@ namespace VHSStore.Infra.IoC
                     ValidateAudience = false
                 };
             });
+
+            services.AddHangfire(config =>
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseDefaultTypeSerializer()
+                .UseMemoryStorage());
+
+            services.AddHangfireServer();
+            services.AddSingleton<IEmailJob, EmailJob>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IGenreRepository, GenreRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IJwtAuthenticationManager>(x => new JwtAuthenticationManager(key));
         }
+
+        public static void ConfigureScheduleJobs(this IRecurringJobManager recurringJobManager, IServiceProvider serviceProvider)
+        {
+            recurringJobManager.AddOrUpdate(
+                "Email News Letter",
+                () => serviceProvider.GetService<IEmailJob>().NewsLetterEmail(),
+                "* * * * *");
+        }
+
     }
 }

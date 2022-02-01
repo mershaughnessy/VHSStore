@@ -5,6 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.28" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.28" />
+    <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.22" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
@@ -13,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\VHSStore.Application\VHSStore.Application.csproj" />
     <ProjectReference Include="..\VHSStore.Infra.Data\VHSStore.Infra.Data.csproj" />
+    <ProjectReference Include="..\VHSStore.Schedules\VHSStore.Schedules.csproj" />
   </ItemGroup>
 
 </Project>

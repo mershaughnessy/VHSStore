@@ -1,20 +1,13 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VHSStore.Api.Hubs;
 using VHSStore.Infra.IoC;
+using VHSStore.Schedules.Filters;
 
 namespace VHSStore.Api
 {
@@ -38,7 +31,7 @@ namespace VHSStore.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager recurringJobManager, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -70,6 +63,13 @@ namespace VHSStore.Api
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatRoomHub>("/chatroomhub");
             });
+
+            app.UseHangfireDashboard("/Hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
+
+            recurringJobManager.ConfigureScheduleJobs(serviceProvider);
         }
     }
 }
