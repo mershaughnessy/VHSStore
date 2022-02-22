@@ -7,12 +7,13 @@ namespace VHSStore.Domain.Models
 {
     public class User
     {
-        public Guid ID { get; set; }
+        public string ID { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Salt { get; set; }
         public string Email { get; set; }
         public string RefreshToken { get; set; }
+        public bool Subscribed { get; set; }
 
         public User()
         {
@@ -23,7 +24,8 @@ namespace VHSStore.Domain.Models
             this.UserName = addUser.UserName;
             this.Password = password;
             this.Salt = salt;
-            this.Email = addUser.Email; 
+            this.Email = addUser.Email;
+            this.Subscribed = addUser.Subscribed;
         }
     }
 }

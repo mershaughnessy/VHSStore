@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Dapper;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
 using VHSStore.Application.Interfaces;
@@ -9,34 +12,85 @@ namespace VHSStore.Infra.Data.Repositories
 {
     public class GenreRepository : IGenreRepository
     {
-        public Task<int> AddAsync(GenreModel entity)
+        private readonly IConfiguration _configuration;
+
+        public GenreRepository(IConfiguration configuration)
         {
-            throw new NotImplementedException();
+            _configuration = configuration;
         }
 
-        public Task<int> DeleteAsync(int id)
+        public async Task<int> AddAsync(GenreModel entity)
         {
-            throw new NotImplementedException();
+            var sql = @"INSERT INTO [Genres] (IndexId, GenreName)
+                        VALUES (newId(), @GenreName)";
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
+            {
+                await connection.OpenAsync();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
         }
 
-        public Task<IReadOnlyList<GenreModel>> GetAllAsync()
+        public async Task<int> DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            var sql = @"DELETE FROM [Genres] WHERE [IndexId] = @IndexId";
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
+            {
+                await connection.OpenAsync();
+                var result = await connection.ExecuteAsync(sql, new { IndexId = id});
+                return result;
+            }
         }
 
-        public Task<GenreModel> GetByIdAsync(int id)
+        public async Task<IReadOnlyList<GenreModel>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var sql = @"SELECT * FROM [Genres]";
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString(_configuration.GetConnectionString("VHSStoreDBConnection"))))
+            {
+                await connection.OpenAsync();
+                var result = await connection.QueryAsync<GenreModel>(sql);
+                return result.AsList();
+            }
         }
 
-        public Task<GenreModel> GetByIndexIdAsync(string indexId)
+        public async Task<GenreModel> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var sql = @"SELECT * FROM [Genres] WHERE [IndexId] = @IndexId";
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
+            {
+                await connection.OpenAsync();
+                var result = await connection.QuerySingleAsync<GenreModel>(sql, new { IndexId = id });
+                return result;
+            }
         }
 
-        public Task<int> UpdateAsync(GenreModel entity)
+        public async Task<GenreModel> GetByIndexIdAsync(string indexId)
         {
-            throw new NotImplementedException();
+            var sql = @"SELECT * FROM [Genres] WHERE [IndexId] = @IndexId";
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
+            {
+                await connection.OpenAsync();
+                var result = await connection.QuerySingleAsync<GenreModel>(sql, new { IndexId = indexId });
+                return result;
+            }
+        }
+
+        public async Task<int> UpdateAsync(GenreModel entity)
+        {
+            var sql = @"UPDATE [Genres] SET [GenreName] = @GenreName
+                        WHERE [IndexId] = @IndexId";
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
+            {
+                await connection.OpenAsync();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
         }
     }
 }

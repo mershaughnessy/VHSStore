@@ -24,6 +24,10 @@ namespace VHSStore.Api.Controllers
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
+        /// <summary>
+        /// Retrieve all Users.
+        /// </summary>
+        /// <returns>A collection of Users</returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -127,7 +131,7 @@ namespace VHSStore.Api.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {

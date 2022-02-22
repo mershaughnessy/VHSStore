@@ -21,8 +21,8 @@ namespace VHSStore.Infra.Data.Repositories
 
         public async Task<int> AddAsync(User entity)
         {
-            var sql = @"INSERT INTO [VHSStoreDB].[dbo].[Users] (ID, UserName, [Password], Salt, Email, RefreshToken)
-                        VALUES (newid(), @UserName, @Password, @Salt, @Email, @RefreshToken)";
+            var sql = @"INSERT INTO [Users] (ID, UserName, [Password], Salt, Email, RefreshToken, Subscribed)
+                        VALUES (newid(), @UserName, @Password, @Salt, @Email, @RefreshToken, @Subscribed)";
 
             using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
             {
@@ -32,9 +32,9 @@ namespace VHSStore.Infra.Data.Repositories
             }
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(string id)
         {
-            var sql = @"DELETE FROM [VHSStoreDB].[dbo].[Users] WHERE [ID] = @Id";
+            var sql = @"DELETE FROM [Users] WHERE [ID] = @Id";
 
             using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
             {
@@ -46,7 +46,7 @@ namespace VHSStore.Infra.Data.Repositories
 
         public async Task<IReadOnlyList<User>> GetAllAsync()
         {
-            var sql = @"SELECT * FROM [VHSStoreDB].[dbo].[Users]";
+            var sql = @"SELECT * FROM [Users]";
             using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
             {
                 connection.Open();
@@ -55,7 +55,7 @@ namespace VHSStore.Infra.Data.Repositories
             }
         }
 
-        public Task<User> GetByIdAsync(int id)
+        public Task<User> GetByIdAsync(string id)
         {
             throw new NotImplementedException();
         }
@@ -67,7 +67,7 @@ namespace VHSStore.Infra.Data.Repositories
 
         public async Task<User> GetByUserNameAsync(string userName)
         {
-            var sql = @"SELECT * FROM [VHSStoreDB].[dbo].[Users]
+            var sql = @"SELECT * FROM [Users]
                         WHERE [UserName] = @UserName";
             using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
             {

@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.PlatformAbstractions;
 using System;
+using System.IO;
+using System.Reflection;
 using VHSStore.Api.Hubs;
 using VHSStore.Infra.IoC;
 using VHSStore.Schedules.Filters;
@@ -25,7 +28,19 @@ namespace VHSStore.Api
         {
             services.AddControllers();
             services.AddInfrastructure();
-            services.AddSwaggerGen();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "VHS Store Documentation",
+                    Version = "v1"
+                });
+
+                var filePath = Path.Combine(AppContext.BaseDirectory, "VHSStore.Api.xml");
+                c.IncludeXmlComments(filePath);
+            });
+
             services.AddSignalR();
             services.AddCors();
         }
