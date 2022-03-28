@@ -14,11 +14,11 @@ namespace VHSStore.Api.Controllers
     [ApiController]
     public class GenreController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IGenreRepository _genreRepository;
 
-        public GenreController(IUnitOfWork unitOfWork)
+        public GenreController(IGenreRepository genreRepository)
         {
-            _unitOfWork = unitOfWork;
+            _genreRepository = genreRepository;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace VHSStore.Api.Controllers
         {
             try
             {
-                var data = await _unitOfWork.Genres.GetAllAsync();
+                var data = await _genreRepository.GetAllAsync();
 
                 return Ok(new BaseResponse<IEnumerable<GenreModel>>()
                 { 
@@ -48,7 +48,7 @@ namespace VHSStore.Api.Controllers
         {
             try
             {
-                var data = await _unitOfWork.Genres.AddAsync(new GenreModel(genreName));
+                var data = await _genreRepository.AddAsync(new GenreModel(genreName));
 
 
                 return Ok(new BaseResponse<string>()
@@ -71,7 +71,7 @@ namespace VHSStore.Api.Controllers
         {
             try
             {
-                var data = await _unitOfWork.Genres.GetByIndexIdAsync(id);
+                var data = await _genreRepository.GetByIndexIdAsync(id);
 
                 return Ok(new BaseResponse<GenreModel>()
                 { 

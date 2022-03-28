@@ -15,25 +15,21 @@ namespace VHSStore.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserRepository _userRepository;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
 
-        public UserController(IUnitOfWork unitOfWork, IJwtAuthenticationManager jwtAuthenticationManager)
+        public UserController(IUserRepository userRepository, IJwtAuthenticationManager jwtAuthenticationManager)
         {
-            _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
-        /// <summary>
-        /// Retrieve all Users.
-        /// </summary>
-        /// <returns>A collection of Users</returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var data = await _unitOfWork.Users.GetAllAsync();
+                var data = await _userRepository.GetAllAsync();
 
                 return Ok(new BaseResponse<IEnumerable<User>>()
                 {
@@ -55,7 +51,7 @@ namespace VHSStore.Api.Controllers
         {
             try
             {
-                var data = await _unitOfWork.Users.GetByUserNameAsync(userName);
+                var data = await _userRepository.GetByUserNameAsync(userName);
 
                 if (data == null)
                 {
@@ -98,7 +94,7 @@ namespace VHSStore.Api.Controllers
         {
             try
             {
-                var checkUserAlreadyExists = await _unitOfWork.Users.GetByUserNameAsync(addUser.UserName);
+                var checkUserAlreadyExists = await _userRepository.GetByUserNameAsync(addUser.UserName);
 
                 if (!(checkUserAlreadyExists == null))
                 {
@@ -113,7 +109,7 @@ namespace VHSStore.Api.Controllers
 
                 var user = new User(addUser, passwordHasher.HashedString, Convert.ToBase64String(passwordHasher.Salt));
 
-                var data = await _unitOfWork.Users.AddAsync(user);
+                var data = await _userRepository.AddAsync(user);
 
                 return Ok(new BaseResponse<string>()
                 { 
@@ -135,7 +131,7 @@ namespace VHSStore.Api.Controllers
         {
             try
             {
-                var data = await _unitOfWork.Users.DeleteAsync(id);
+                var data = await _userRepository.DeleteAsync(id);
 
                 return Ok(new BaseResponse<string>()
                 { 

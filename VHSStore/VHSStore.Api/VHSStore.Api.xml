@@ -4,11 +4,5 @@
         <name>VHSStore.Api</name>
     </assembly>
     <members>
-        <member name="M:VHSStore.Api.Controllers.UserController.GetAll">
-            <summary>
-            Retrieve all Users.
-            </summary>
-            <returns>A collection of Users</returns>
-        </member>
     </members>
 </doc>

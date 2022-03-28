@@ -45,7 +45,6 @@ namespace VHSStore.Infra.IoC
             services.AddSingleton<IEmailJob, EmailJob>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IGenreRepository, GenreRepository>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IJwtAuthenticationManager>(x => new JwtAuthenticationManager(key));
         }
 
