@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 using VHSStore.Application.Interfaces;
 using VHSStore.Domain.Models.GenreModels;
@@ -48,7 +47,7 @@ namespace VHSStore.Infra.Data.Repositories
         {
             var sql = @"SELECT * FROM [Genres]";
 
-            using (var connection = new SqlConnection(_configuration.GetConnectionString(_configuration.GetConnectionString("VHSStoreDBConnection"))))
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
             {
                 await connection.OpenAsync();
                 var result = await connection.QueryAsync<GenreModel>(sql);
