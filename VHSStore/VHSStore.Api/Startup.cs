@@ -1,13 +1,12 @@
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.OpenApi.Models;
 using System;
-using System.IO;
-using System.Reflection;
 using VHSStore.Api.Hubs;
 using VHSStore.Infra.IoC;
 using VHSStore.Schedules.Filters;
@@ -31,14 +30,34 @@ namespace VHSStore.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                var jwtSecurityScheme = new OpenApiSecurityScheme
+                {
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+
+                c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { jwtSecurityScheme, Array.Empty<string>() }
+                });
+
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "VHS Store Documentation",
                     Version = "v1"
                 });
-
-                var filePath = Path.Combine(AppContext.BaseDirectory, "VHSStore.Api.xml");
-                c.IncludeXmlComments(filePath);
             });
 
             services.AddSignalR();
@@ -71,6 +90,7 @@ namespace VHSStore.Api
            .AllowCredentials()
            );
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

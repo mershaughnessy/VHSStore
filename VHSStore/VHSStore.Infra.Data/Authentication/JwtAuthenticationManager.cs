@@ -28,6 +28,7 @@ namespace VHSStore.Infra.Data.Authentication
                 {
 
                 }),
+                NotBefore = DateTime.Now,
                 Expires = DateTime.Now.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey),
                 SecurityAlgorithms.HmacSha256Signature)

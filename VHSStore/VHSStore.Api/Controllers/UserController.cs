@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace VHSStore.Api.Controllers
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -124,6 +126,7 @@ namespace VHSStore.Api.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {

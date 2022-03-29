@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VHSStore.Application.Interfaces;
@@ -10,6 +9,7 @@ using VHSStore.Domain.Models.GenreModels;
 
 namespace VHSStore.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GenreController : ControllerBase
