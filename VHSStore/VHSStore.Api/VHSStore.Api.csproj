@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\VHSStore.Hubs\VHSStore.Hubs.csproj" />
     <ProjectReference Include="..\VHSStore.Infra.IoC\VHSStore.Infra.IoC.csproj" />
+    <ProjectReference Include="..\VHSStore.Utility\VHSStore.Utility.csproj" />
   </ItemGroup>
 
 

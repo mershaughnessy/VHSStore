@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using VHSStore.Api.Utility;
 using VHSStore.Application.Interfaces;
 using VHSStore.Domain.Models;
 using VHSStore.Domain.Models.UserModels;
+using VHSStore.Utility;
 
 namespace VHSStore.Api.Controllers
 {

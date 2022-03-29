@@ -50,7 +50,6 @@ namespace VHSStore.Api.Controllers
             {
                 var data = await _genreRepository.AddAsync(new GenreModel(genreName));
 
-
                 return Ok(new BaseResponse<string>()
                 {
                     Body = $"Affected rows: {data}"

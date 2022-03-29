@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using VHSStore.Domain.Models.UserModels;
+﻿using VHSStore.Domain.Models.UserModels;
 
 namespace VHSStore.Domain.Models
 {
@@ -14,6 +11,7 @@ namespace VHSStore.Domain.Models
         public string Email { get; set; }
         public string RefreshToken { get; set; }
         public bool Subscribed { get; set; }
+        public bool EmailVerified { get; set; }
 
         public User()
         {

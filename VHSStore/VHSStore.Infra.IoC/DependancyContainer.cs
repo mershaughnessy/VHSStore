@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using VHSStore.Application.Interfaces;
+using VHSStore.Application.Interfaces.Repos_Interfaces;
 using VHSStore.Infra.Data.Authentication;
 using VHSStore.Infra.Data.Repositories;
 using VHSStore.Schedules.Jobs;
@@ -45,6 +46,7 @@ namespace VHSStore.Infra.IoC
             services.AddSingleton<IEmailJob, EmailJob>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IGenreRepository, GenreRepository>();
+            services.AddTransient<IMovieRepository, MovieRepository>();
             services.AddSingleton<IJwtAuthenticationManager>(x => new JwtAuthenticationManager(key));
         }
 
@@ -55,6 +57,5 @@ namespace VHSStore.Infra.IoC
                 () => serviceProvider.GetService<IEmailJob>().NewsLetterEmail(),
                 "* * * * *");
         }
-
     }
 }

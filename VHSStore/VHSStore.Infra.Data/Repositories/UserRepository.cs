@@ -21,8 +21,8 @@ namespace VHSStore.Infra.Data.Repositories
 
         public async Task<int> AddAsync(User entity)
         {
-            var sql = @"INSERT INTO [Users] (ID, UserName, [Password], Salt, Email, RefreshToken, Subscribed)
-                        VALUES (newid(), @UserName, @Password, @Salt, @Email, @RefreshToken, @Subscribed)";
+            var sql = @"INSERT INTO [Users] (ID, UserName, [Password], Salt, Email, RefreshToken, Subscribed, EmailVerified)
+                        VALUES (newid(), @UserName, @Password, @Salt, @Email, @RefreshToken, @Subscribed, 0)";
 
             using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
             {
@@ -55,9 +55,15 @@ namespace VHSStore.Infra.Data.Repositories
             }
         }
 
-        public Task<User> GetByIdAsync(string id)
+        public async Task<User> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var sql = @"SELECT * FROM [Users] WHERE [Id] = @Id";
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
+            {
+                connection.Open();
+                var result = await connection.QuerySingleAsync<User>(sql, new { Id = id });
+                return result;
+            }
         }
 
         public Task<int> UpdateAsync(User entity)
