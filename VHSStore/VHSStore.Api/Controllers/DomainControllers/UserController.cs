@@ -148,5 +148,18 @@ namespace VHSStore.Api.Controllers
                 });
             }
         }
+
+        [HttpPost("RequestPasswordReset")]
+        public async Task<IActionResult> RequestPasswordReset(string userName)
+        {
+            try
+            {
+                return Ok("Successfully send email");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

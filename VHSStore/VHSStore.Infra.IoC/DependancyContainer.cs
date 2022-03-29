@@ -47,6 +47,8 @@ namespace VHSStore.Infra.IoC
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IGenreRepository, GenreRepository>();
             services.AddTransient<IMovieRepository, MovieRepository>();
+            services.AddTransient<IInvoiceRepository, InvoiceRepository>();
+            services.AddTransient<IInvoiceDetailRepository, InvoiceDetailRepository>();
             services.AddSingleton<IJwtAuthenticationManager>(x => new JwtAuthenticationManager(key));
         }
 
