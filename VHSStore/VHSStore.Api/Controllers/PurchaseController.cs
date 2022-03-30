@@ -18,11 +18,15 @@ namespace VHSStore.Api.Controllers
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IInvoiceDetailRepository _invoiceDetailRepository;
+        private readonly IMovieRepository _movieRepository;
 
-        public PurchaseController(IInvoiceRepository invoiceRepository, IInvoiceDetailRepository invoiceDetailRepository)
+        public PurchaseController(IInvoiceRepository invoiceRepository,
+            IInvoiceDetailRepository invoiceDetailRepository,
+            IMovieRepository movieRepository)
         {
             _invoiceRepository = invoiceRepository;
             _invoiceDetailRepository = invoiceDetailRepository;
+            _movieRepository = movieRepository;
         }
 
         [HttpPost("CompletePurchase")]
@@ -49,27 +53,29 @@ namespace VHSStore.Api.Controllers
                     {
                         await _invoiceDetailRepository.AddAsync(
                             new InvoiceDetailModel
-                            { 
+                            {
                                 MovieId = completePurchase.InvoiceDetails[i].MovieId,
                                 Quantity = completePurchase.InvoiceDetails[i].Quantity,
                                 UnitPrice = completePurchase.InvoiceDetails[i].UnitPrice,
                                 TotalPrice = completePurchase.InvoiceDetails[i].Quantity * completePurchase.InvoiceDetails[i].UnitPrice,
                                 InvoiceNumber = invoiceNumber
                             });
+
+                        await _movieRepository.StockChangeAsync(completePurchase.InvoiceDetails[i].MovieId, -completePurchase.InvoiceDetails[i].Quantity);
                     }
 
                     transaction.Complete();
                 }
 
                 return Ok(new BaseResponse<string>()
-                { 
+                {
                     Body = "Purchase Successfully completed."
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new BaseResponse<string>()
-                { 
+                {
                     HasError = true,
                     Error = ex.Message
                 });

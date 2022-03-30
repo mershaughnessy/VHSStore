@@ -80,5 +80,22 @@ namespace VHSStore.Infra.Data.Repositories
                 return result;
             }
         }
+
+        public async Task<int> StockChangeAsync(string movieId, int stockChange)
+        {
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
+            {
+                await connection.OpenAsync();
+                var result = await connection.ExecuteAsync(
+                    @"UPDATE [Movies] SET [StockNumber] = [StockNumber] + @StockChange
+                    WHERE [IndexId] = @IndexId",
+                    new
+                    { 
+                        StockChange = stockChange,
+                        IndexId = movieId
+                    });
+                return result;
+            }
+        }
     }
 }
