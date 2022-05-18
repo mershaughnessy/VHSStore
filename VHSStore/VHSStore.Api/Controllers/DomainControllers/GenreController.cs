@@ -24,67 +24,34 @@ namespace VHSStore.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> SelectAllGenres()
         {
-            try
-            {
-                var data = await _genreRepository.GetAllAsync();
+            var data = await _genreRepository.GetAllAsync();
 
-                return Ok(new BaseResponse<IEnumerable<GenreModel>>()
-                { 
-                    Body = data
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BaseResponse<string>()
-                { 
-                    HasError = true,
-                    Error = ex.Message
-                });
-            }
+            return Ok(new BaseResponse<IEnumerable<GenreModel>>()
+            { 
+                Body = data
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> AddNewGenre(string genreName)
         {
-            try
-            {
-                var data = await _genreRepository.AddAsync(new GenreModel(genreName));
+            var data = await _genreRepository.AddAsync(new GenreModel(genreName));
 
-                return Ok(new BaseResponse<string>()
-                {
-                    Body = $"Affected rows: {data}"
-                }); ;
-            }
-            catch (Exception ex)
+            return Ok(new BaseResponse<string>()
             {
-                return BadRequest(new BaseResponse<string>()
-                { 
-                    HasError = true,
-                    Error = ex.Message
-                });
-            }
+                Body = $"Affected rows: {data}"
+            });
         }
 
         [HttpGet("ById")]
         public async Task<IActionResult> GetById(string id)
         {
-            try
-            {
-                var data = await _genreRepository.GetByIndexIdAsync(id);
+            var data = await _genreRepository.GetByIndexIdAsync(id);
 
-                return Ok(new BaseResponse<GenreModel>()
-                { 
-                    Body = data
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BaseResponse<string>()
-                { 
-                    HasError = true,
-                    Error = ex.Message
-                });
-            }
+            return Ok(new BaseResponse<GenreModel>()
+            { 
+                Body = data
+            });
         }
     }
 }

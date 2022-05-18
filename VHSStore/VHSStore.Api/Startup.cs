@@ -10,6 +10,7 @@ using System;
 using VHSStore.Api.Hubs;
 using VHSStore.Infra.IoC;
 using VHSStore.Schedules.Filters;
+using VHSStore.Utility.Middleware.ExceptionMiddlewares;
 
 namespace VHSStore.Api
 {
@@ -71,6 +72,8 @@ namespace VHSStore.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.CustomConfigurationExceptionMiddleware();
 
             app.UseHttpsRedirection();
 

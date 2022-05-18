@@ -34,54 +34,43 @@ namespace VHSStore.Api.Controllers
         [HttpPost("CompletePurchase")]
         public async Task<IActionResult> CompletePurchase(CompletePurchaseModel completePurchase)
         {
-            try
+            var invoiceNumber = Guid.NewGuid().ToString();
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var invoiceNumber = Guid.NewGuid().ToString();
-                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                await _invoiceRepository.AddAsync(
+                    new InvoiceModel
+                    {
+                        InvoiceNumber = invoiceNumber,
+                        CustomerId = completePurchase.CustomerId,
+                        TotalInvoicePrice = completePurchase.TotalInvoicePrice,
+                        PurchaseDate = DateTime.Now,
+                        ADDR1 = completePurchase.ADDR1,
+                        ADDR2 = completePurchase.ADDR2,
+                        PostCode = completePurchase.PostCode
+                    });
+
+                for (int i = 0; i < completePurchase.InvoiceDetails.Count(); i++)
                 {
-                    await _invoiceRepository.AddAsync(
-                        new InvoiceModel
+                    await _invoiceDetailRepository.AddAsync(
+                        new InvoiceDetailModel
                         {
-                            InvoiceNumber = invoiceNumber,
-                            CustomerId = completePurchase.CustomerId,
-                            TotalInvoicePrice = completePurchase.TotalInvoicePrice,
-                            PurchaseDate = DateTime.Now,
-                            ADDR1 = completePurchase.ADDR1,
-                            ADDR2 = completePurchase.ADDR2,
-                            PostCode = completePurchase.PostCode
+                            MovieId = completePurchase.InvoiceDetails[i].MovieId,
+                            Quantity = completePurchase.InvoiceDetails[i].Quantity,
+                            UnitPrice = completePurchase.InvoiceDetails[i].UnitPrice,
+                            TotalPrice = completePurchase.InvoiceDetails[i].Quantity * completePurchase.InvoiceDetails[i].UnitPrice,
+                            InvoiceNumber = invoiceNumber
                         });
 
-                    for (int i = 0; i < completePurchase.InvoiceDetails.Count(); i++)
-                    {
-                        await _invoiceDetailRepository.AddAsync(
-                            new InvoiceDetailModel
-                            {
-                                MovieId = completePurchase.InvoiceDetails[i].MovieId,
-                                Quantity = completePurchase.InvoiceDetails[i].Quantity,
-                                UnitPrice = completePurchase.InvoiceDetails[i].UnitPrice,
-                                TotalPrice = completePurchase.InvoiceDetails[i].Quantity * completePurchase.InvoiceDetails[i].UnitPrice,
-                                InvoiceNumber = invoiceNumber
-                            });
-
-                        await _movieRepository.StockChangeAsync(completePurchase.InvoiceDetails[i].MovieId, -completePurchase.InvoiceDetails[i].Quantity);
-                    }
-
-                    transaction.Complete();
+                    await _movieRepository.StockChangeAsync(completePurchase.InvoiceDetails[i].MovieId, -completePurchase.InvoiceDetails[i].Quantity);
                 }
 
-                return Ok(new BaseResponse<string>()
-                {
-                    Body = "Purchase Successfully completed."
-                });
+                transaction.Complete();
             }
-            catch (Exception ex)
+
+            return Ok(new BaseResponse<string>()
             {
-                return BadRequest(new BaseResponse<string>()
-                {
-                    HasError = true,
-                    Error = ex.Message
-                });
-            }
+                Body = "Purchase Successfully completed."
+            });
         }
     }
 }

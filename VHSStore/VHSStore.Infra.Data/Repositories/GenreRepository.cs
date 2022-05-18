@@ -55,18 +55,6 @@ namespace VHSStore.Infra.Data.Repositories
             }
         }
 
-        public async Task<GenreModel> GetByIdAsync(string id)
-        {
-            var sql = @"SELECT * FROM [Genres] WHERE [IndexId] = @IndexId";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                await connection.OpenAsync();
-                var result = await connection.QuerySingleAsync<GenreModel>(sql, new { IndexId = id });
-                return result;
-            }
-        }
-
         public async Task<GenreModel> GetByIndexIdAsync(string indexId)
         {
             var sql = @"SELECT * FROM [Genres] WHERE [IndexId] = @IndexId";
@@ -74,7 +62,7 @@ namespace VHSStore.Infra.Data.Repositories
             using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
             {
                 await connection.OpenAsync();
-                var result = await connection.QuerySingleAsync<GenreModel>(sql, new { IndexId = indexId });
+                var result = await connection.QuerySingleOrDefaultAsync<GenreModel>(sql, new { IndexId = indexId });
                 return result;
             }
         }
@@ -90,6 +78,11 @@ namespace VHSStore.Infra.Data.Repositories
                 var result = await connection.ExecuteAsync(sql, entity);
                 return result;
             }
+        }
+
+        Task<GenreModel> IGenericRepository<GenreModel>.GetByIdAsync(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

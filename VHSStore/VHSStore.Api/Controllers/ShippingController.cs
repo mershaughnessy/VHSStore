@@ -24,45 +24,24 @@ namespace VHSStore.Api.Controllers
         [HttpPost("ShipPurchase")]
         public async Task<IActionResult> ShipPurchase(string invoiceNumber)
         {
-            try
-            {
-                var data = await _invoiceRepository.UpdateShippingStatusAsync(invoiceNumber, true);
+            var data = await _invoiceRepository.UpdateShippingStatusAsync(invoiceNumber, true);
 
-                return Ok(new BaseResponse<string>()
-                {
-                    Body = $"Affected Rows: {data}"
-                });
-            }
-            catch (Exception ex)
+            return Ok(new BaseResponse<string>()
             {
-                return BadRequest(new BaseResponse<string>()
-                { 
-                    HasError = true,
-                    Error = ex.Message
-                });
-            }
+                Body = $"Affected Rows: {data}"
+            });
         }
 
         [HttpGet("OutstandingShipments")]
         public async Task<IActionResult> OutstandingShipments()
         {
-            try
-            {
-                var data = await _invoiceRepository.GetInvoicesPendingShipmentAsync();
 
-                return Ok(new BaseResponse<IEnumerable<InvoiceModel>>()
-                { 
-                    Body = data
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BaseResponse<string>()
-                { 
-                    HasError = true,
-                    Error = ex.Message
-                });
-            }
+            var data = await _invoiceRepository.GetInvoicesPendingShipmentAsync();
+
+            return Ok(new BaseResponse<IEnumerable<InvoiceModel>>()
+            { 
+                Body = data
+            });
         }
     }
 }
