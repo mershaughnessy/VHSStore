@@ -1,2 +1,3 @@
 # VHSStore
-A website for purchasing VHS tapes.
+Set of API for managing purchases of VHS tapes.
+Includes stock management and invoicing of purchases.
