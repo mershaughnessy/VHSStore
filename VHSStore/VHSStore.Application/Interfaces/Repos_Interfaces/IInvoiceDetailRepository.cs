@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading.Tasks;
 using VHSStore.Domain.Models;
 
 namespace VHSStore.Application.Interfaces.Repos_Interfaces
 {
-    public interface IInvoiceDetailRepository : IGenericRepository<InvoiceDetailModel>
+    public interface IInvoiceDetailRepository
     {
+        public Task<int> AddAsync(InvoiceDetailModel entity);
     }
 }

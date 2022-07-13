@@ -1,86 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using VHSStore.Application.Interfaces;
 using VHSStore.Domain.Models;
-using VHSStore.Domain.Models.UserModels;
+using VHSStore.Utility.Sql;
 
 namespace VHSStore.Infra.Data.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IConfiguration _configuration;
+        private readonly DapperWrap _dapperWrap;
+
         public UserRepository(IConfiguration configuration)
         {
-            _configuration = configuration;
+            _dapperWrap = new DapperWrap(configuration.GetConnectionString("VHSStoreDBConnection"));
         }
 
         public async Task<int> AddAsync(User entity)
         {
-            var sql = @"INSERT INTO [Users] (ID, UserName, [Password], Salt, Email, RefreshToken, Subscribed, EmailVerified)
-                        VALUES (newid(), @UserName, @Password, @Salt, @Email, @RefreshToken, @Subscribed, 0)";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                connection.Open();
-                var result = await connection.ExecuteAsync(sql, entity);
-                return result;
-            }
+            var result = await _dapperWrap.ExecuteAsync(
+                @"INSERT INTO [Users] (ID, UserName, [Password], Salt, Email, RefreshToken, Subscribed, EmailVerified)
+                VALUES (newid(), @UserName, @Password, @Salt, @Email, @RefreshToken, @Subscribed, 0)", entity);
+            return result;
         }
 
         public async Task<int> DeleteAsync(string id)
         {
-            var sql = @"DELETE FROM [Users] WHERE [ID] = @Id";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                connection.Open();
-                var result = await connection.ExecuteAsync(sql, new { Id = id});
-                return result;
-            }
+            var result = await _dapperWrap.ExecuteAsync(@"DELETE FROM [Users] WHERE [ID] = @Id", new { Id = id });
+            return result;
         }
 
-        public async Task<IReadOnlyList<User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
-            var sql = @"SELECT * FROM [Users]";
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                connection.Open();
-                var result = await connection.QueryAsync<User>(sql);
-                return result.AsList();
-            }
+            var result = await _dapperWrap.QueryAsync<User>(@"SELECT * FROM [Users]");
+            return result;
         }
 
         public async Task<User> GetByIdAsync(string id)
         {
-            var sql = @"SELECT * FROM [Users] WHERE [Id] = @Id";
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                connection.Open();
-                var result = await connection.QuerySingleAsync<User>(sql, new { Id = id });
-                return result;
-            }
-        }
-
-        public Task<int> UpdateAsync(User entity)
-        {
-            throw new NotImplementedException();
+            var result = await _dapperWrap.QuerySingleAsync<User>(@"SELECT * FROM [Users] WHERE [Id] = @Id", new { Id = id });
+            return result;
         }
 
         public async Task<User> GetByUserNameAsync(string userName)
         {
-            var sql = @"SELECT * FROM [Users]
-                        WHERE [UserName] = @UserName";
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                connection.Open();
-                var result = await connection.QuerySingleOrDefaultAsync<User>(sql, new { UserName = userName});
-                return result;
-            }
+            var result = await _dapperWrap.QuerySingleAsync<User>(@"SELECT * FROM [Users] WHERE [UserName] = @UserName", new { UserName = userName });
+            return result;
         }
     }
 }

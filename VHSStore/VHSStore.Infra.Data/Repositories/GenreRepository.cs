@@ -6,83 +6,50 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using VHSStore.Application.Interfaces;
 using VHSStore.Domain.Models.GenreModels;
+using VHSStore.Utility.Sql;
 
 namespace VHSStore.Infra.Data.Repositories
 {
     public class GenreRepository : IGenreRepository
     {
-        private readonly IConfiguration _configuration;
+        private readonly DapperWrap _dapperWrap;
 
         public GenreRepository(IConfiguration configuration)
         {
-            _configuration = configuration;
+            _dapperWrap = new DapperWrap(configuration.GetConnectionString("VHSStoreDBConnection"));
         }
 
         public async Task<int> AddAsync(GenreModel entity)
         {
-            var sql = @"INSERT INTO [Genres] (IndexId, GenreName)
-                        VALUES (newId(), @GenreName)";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                await connection.OpenAsync();
-                var result = await connection.ExecuteAsync(sql, entity);
-                return result;
-            }
+            var result = await _dapperWrap.ExecuteAsync(
+                @"INSERT INTO [Genres] (IndexId, GenreName) VALUES (newId(), @GenreName)", entity);
+            return result;
         }
 
         public async Task<int> DeleteAsync(string id)
         {
-            var sql = @"DELETE FROM [Genres] WHERE [IndexId] = @IndexId";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                await connection.OpenAsync();
-                var result = await connection.ExecuteAsync(sql, new { IndexId = id});
-                return result;
-            }
+            var result = await _dapperWrap.ExecuteAsync(@"DELETE FROM [Genres] WHERE [IndexId] = @IndexId", new { IndexId = id });
+            return result;
         }
 
-        public async Task<IReadOnlyList<GenreModel>> GetAllAsync()
+        public async Task<IEnumerable<GenreModel>> GetAllAsync()
         {
-            var sql = @"SELECT * FROM [Genres]";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                await connection.OpenAsync();
-                var result = await connection.QueryAsync<GenreModel>(sql);
-                return result.AsList();
-            }
+            var result = await _dapperWrap.QueryAsync<GenreModel>(@"SELECT * FROM [Genres]");
+            return result;
         }
 
         public async Task<GenreModel> GetByIndexIdAsync(string indexId)
         {
-            var sql = @"SELECT * FROM [Genres] WHERE [IndexId] = @IndexId";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                await connection.OpenAsync();
-                var result = await connection.QuerySingleOrDefaultAsync<GenreModel>(sql, new { IndexId = indexId });
-                return result;
-            }
+            var result = await _dapperWrap.QuerySingleAsync<GenreModel>(@"SELECT * FROM [Genres] WHERE [IndexId] = @IndexId",
+                new { IndexId = indexId });
+            return result;
         }
 
         public async Task<int> UpdateAsync(GenreModel entity)
         {
-            var sql = @"UPDATE [Genres] SET [GenreName] = @GenreName
-                        WHERE [IndexId] = @IndexId";
-
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                await connection.OpenAsync();
-                var result = await connection.ExecuteAsync(sql, entity);
-                return result;
-            }
-        }
-
-        Task<GenreModel> IGenericRepository<GenreModel>.GetByIdAsync(string id)
-        {
-            throw new NotImplementedException();
+            var result = await _dapperWrap.ExecuteAsync(@"UPDATE [Genres] SET [GenreName] = @GenreName
+                        WHERE [IndexId] = @IndexId", entity);
+            return result;
         }
     }
 }

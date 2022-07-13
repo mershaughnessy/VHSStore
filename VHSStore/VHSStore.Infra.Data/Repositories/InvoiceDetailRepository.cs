@@ -1,56 +1,28 @@
-﻿using Dapper;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Text;
+﻿using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using VHSStore.Application.Interfaces.Repos_Interfaces;
 using VHSStore.Domain.Models;
+using VHSStore.Utility.Sql;
 
 namespace VHSStore.Infra.Data.Repositories
 {
     public class InvoiceDetailRepository : IInvoiceDetailRepository
     {
-        private readonly IConfiguration _configuration;
+        private readonly DapperWrap _dapperWrap;
 
         public InvoiceDetailRepository(IConfiguration configuration)
         {
-            _configuration = configuration;
+            _dapperWrap = new DapperWrap(configuration.GetConnectionString("VHSStoreDBConnection"));
         }
+
         public async Task<int> AddAsync(InvoiceDetailModel entity)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("VHSStoreDBConnection")))
-            {
-                await connection.OpenAsync();
-                var result = await connection.ExecuteAsync(
-                    @"INSERT INTO [InvoiceDetails]
+            var result = await _dapperWrap.ExecuteAsync(@"INSERT INTO [InvoiceDetails]
                         (IndexId, MovieId, Quantity, UnitPrice, TotalPrice, InvoiceNumber)
                     VALUES
                         (newId(), @MovieId, @Quantity, @UnitPrice, @TotalPrice, @InvoiceNumber)",
-                    entity);
-                return result;
-            }
-        }
-
-        public Task<int> DeleteAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyList<InvoiceDetailModel>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<InvoiceDetailModel> GetByIdAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> UpdateAsync(InvoiceDetailModel entity)
-        {
-            throw new NotImplementedException();
+                        entity);
+            return result;
         }
     }
 }
